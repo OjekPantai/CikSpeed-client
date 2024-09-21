@@ -39,6 +39,7 @@ import DeleteServiceModal from "@/components/fragments/service/DeleteServiceModa
 import AddServiceModal from "@/components/fragments/service/AddServiceModal";
 import customApi from "@/api/customApi";
 import { priceFormat } from "@/lib/utils";
+import { toast } from "react-toastify";
 
 const ServicePage = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -78,6 +79,7 @@ const ServicePage = () => {
       await customApi.delete(`/services/${selectedService._id}`);
       await getServices();
       setDeleteModalOpen(false);
+      toast.warning("Service deleted successfully");
     } catch (error) {
       console.error("Error deleting service:", error);
     }
@@ -92,6 +94,7 @@ const ServicePage = () => {
       await customApi.put(`/services/${selectedService._id}`, updatedService);
       await getServices();
       setEditModalOpen(false);
+      toast.info("Service updated successfully");
     } catch (error) {
       console.error("Error updating service:", error);
     }
@@ -103,6 +106,7 @@ const ServicePage = () => {
       await getServices();
       setAddModalOpen(false);
       navigate("/services");
+      toast.success("Service added successfully");
     } catch (error) {
       console.error("Error adding service:", error);
     }
