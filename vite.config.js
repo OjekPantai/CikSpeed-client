@@ -9,8 +9,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        // target: "http://localhost:3000",
-        target: "https://cik-speed-server.vercel.app/",
+        target: "http://localhost:3000",
+        // target: "https://cik-speed-server.vercel.app/",
         changeOrigin: true,
       },
     },
