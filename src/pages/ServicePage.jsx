@@ -5,7 +5,6 @@ import { MoreHorizontal, Pencil, PlusCircle, Trash } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -47,22 +46,26 @@ const ServicePage = () => {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
   const [services, setServices] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
   const navigate = useNavigate();
-  // const location = useLocation();
 
-  const getServices = async () => {
+  const getServices = async (currentPage = 1) => {
     try {
-      const { data } = await customApi.get("/services");
+      const { data } = await customApi.get(
+        `/services?page=${currentPage}&limit=8`
+      );
       setServices(data.data);
+      setTotalPage(data.pagination.totalPage);
     } catch (error) {
       console.error("Error fetching services:", error);
     }
   };
 
   useEffect(() => {
-    getServices();
-  }, []);
+    getServices(page);
+  }, [page]);
 
   const handleEditClick = (service) => {
     setSelectedService(service);
@@ -77,7 +80,7 @@ const ServicePage = () => {
   const handleDeleteConfirm = async () => {
     try {
       await customApi.delete(`/services/${selectedService._id}`);
-      await getServices();
+      await getServices(page); // Refresh services for the current page
       setDeleteModalOpen(false);
       toast.warning("Service deleted successfully");
     } catch (error) {
@@ -92,7 +95,7 @@ const ServicePage = () => {
 
     try {
       await customApi.put(`/services/${selectedService._id}`, updatedService);
-      await getServices();
+      await getServices(page); // Refresh services for the current page
       setEditModalOpen(false);
       toast.info("Service updated successfully");
     } catch (error) {
@@ -103,13 +106,17 @@ const ServicePage = () => {
   const handleAddService = async (newService) => {
     try {
       await customApi.post("/services", newService);
-      await getServices();
+      await getServices(page); // Refresh services for the current page
       setAddModalOpen(false);
       navigate("/services");
       toast.success("Service added successfully");
     } catch (error) {
       console.error("Error adding service:", error);
     }
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
   };
 
   return (
@@ -209,19 +216,36 @@ const ServicePage = () => {
             </Table>
           </CardContent>
           <CardFooter>
-            <Pagination>
+            <Pagination className="w-full justify-end">
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious href="#" />
+                  <PaginationPrevious
+                    onClick={() => handlePageChange(page > 1 ? page - 1 : 1)}
+                    disabled={page === 1}
+                    className={"cursor-pointer"}
+                  />
                 </PaginationItem>
+
+                {[...Array(totalPage).keys()].map((p) => (
+                  <PaginationItem key={p + 1}>
+                    <PaginationLink
+                      isActive={page === p + 1}
+                      onClick={() => handlePageChange(p + 1)}
+                      className={"cursor-pointer"}
+                    >
+                      {p + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+
                 <PaginationItem>
-                  <PaginationLink href="#">1</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationNext href="#" />
+                  <PaginationNext
+                    onClick={() =>
+                      handlePageChange(page < totalPage ? page + 1 : totalPage)
+                    }
+                    disabled={page === totalPage}
+                    className={"cursor-pointer"}
+                  />
                 </PaginationItem>
               </PaginationContent>
             </Pagination>
