@@ -38,19 +38,23 @@ import DeleteServiceModal from "@/components/fragments/service/DeleteServiceModa
 import AddServiceModal from "@/components/fragments/service/AddServiceModal";
 import customApi from "@/api/customApi";
 import { priceFormat } from "@/lib/utils";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 const ServicePage = () => {
+  const [services, setServices] = useState([]);
+
+  // Modals
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
-  const [services, setServices] = useState([]);
+
+  // Pagination
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
 
   const navigate = useNavigate();
-
   const getServices = async (currentPage = 1) => {
     try {
       const { data } = await customApi.get(
@@ -82,9 +86,9 @@ const ServicePage = () => {
       await customApi.delete(`/services/${selectedService._id}`);
       await getServices(page); // Refresh services for the current page
       setDeleteModalOpen(false);
-      toast.warning("Service deleted successfully");
+      toast.success("Service deleted successfully");
     } catch (error) {
-      console.error("Error deleting service:", error);
+      toast.error(`Error deleting service: ${error.message}`);
     }
   };
 
@@ -95,23 +99,23 @@ const ServicePage = () => {
 
     try {
       await customApi.put(`/services/${selectedService._id}`, updatedService);
-      await getServices(page); // Refresh services for the current page
+      await getServices(page);
       setEditModalOpen(false);
-      toast.info("Service updated successfully");
+      toast.success("Service updated successfully");
     } catch (error) {
-      console.error("Error updating service:", error);
+      toast.error(`Error updating service: ${error.message}`);
     }
   };
 
   const handleAddService = async (newService) => {
     try {
       await customApi.post("/services", newService);
-      await getServices(page); // Refresh services for the current page
+      await getServices(page);
       setAddModalOpen(false);
       navigate("/services");
       toast.success("Service added successfully");
     } catch (error) {
-      console.error("Error adding service:", error);
+      toast.error(`Error adding service: ${error.message}`);
     }
   };
 
@@ -153,15 +157,19 @@ const ServicePage = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nama</TableHead>
-                  <TableHead className="hidden sm:table-cell">
+                  <TableHead className="text-xs md:text-base">Nama</TableHead>
+                  <TableHead className="text-xs md:text-base hidden sm:table-cell">
                     Deskripsi
                   </TableHead>
-                  <TableHead className="hidden sm:table-cell">
+                  <TableHead className="text-xs md:text-base hidden sm:table-cell">
                     Kategori
                   </TableHead>
-                  <TableHead>Estimasi</TableHead>
-                  <TableHead>Biaya Servis</TableHead>
+                  <TableHead className="text-xs md:text-base">
+                    Estimasi
+                  </TableHead>
+                  <TableHead className="text-xs md:text-base">
+                    Biaya Servis
+                  </TableHead>
                   <TableHead>
                     <span className="sr-only">Actions</span>
                   </TableHead>
@@ -169,7 +177,7 @@ const ServicePage = () => {
               </TableHeader>
               <TableBody>
                 {services.map((service) => (
-                  <TableRow key={service._id}>
+                  <TableRow className="text-sm lg:text-base" key={service._id}>
                     <TableCell>{service.name}</TableCell>
                     <TableCell className="hidden sm:table-cell">
                       {service.description}

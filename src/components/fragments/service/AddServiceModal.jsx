@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 const AddServiceModal = ({ open, onClose, onSubmit }) => {
   const [category, setCategory] = useState("");
@@ -45,10 +46,7 @@ const AddServiceModal = ({ open, onClose, onSubmit }) => {
             <Label htmlFor="name">Nama Service</Label>
             <Input id="name" name="name" type="text" required />
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">Deskripsi</Label>
-            <Input id="description" name="description" type="text" required />
-          </div>
+
           <div className="grid gap-2">
             <Label htmlFor="category">Kategori</Label>
             <Select value={category} onValueChange={setCategory} required>
@@ -73,6 +71,15 @@ const AddServiceModal = ({ open, onClose, onSubmit }) => {
           <div className="grid gap-2">
             <Label htmlFor="price">Biaya Servis</Label>
             <Input id="price" name="price" type="number" required />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="description">Deskripsi</Label>
+            <Textarea
+              id="description"
+              name="description"
+              type="text"
+              required
+            />
           </div>
           <DialogFooter>
             <div className="grid grid-cols-2 gap-4">

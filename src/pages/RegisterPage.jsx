@@ -2,7 +2,7 @@ import customApi from "@/api/customApi";
 import FormAuth from "@/components/fragments/auth/FormAuth";
 import { registerUser } from "@/features/userSlice";
 import { redirect } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 export const action =
   (store) =>
